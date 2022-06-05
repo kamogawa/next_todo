@@ -3,6 +3,9 @@ import styled from "styled-components";
 import palette from "../styles/palette";
 import { TodoType } from "../types/todo";
 
+import TrashCanIcon from "../public/static/svg/trash-can.svg";
+import CheckMarkIcon from "../public/static/svg/check-mark.svg";
+
 const Container = styled.div`
   width: 100%;
 `;
@@ -80,6 +83,21 @@ const CheckedTodoText = styled.p`
 const TodoRightSide = styled.div`
   display: flex;
   margin-right: 12px;
+  svg {
+    &:first-child {
+      margin-right: 16px;
+    }
+  }
+`;
+
+const TodoTrashCanIcon = styled(TrashCanIcon)`
+  path: {
+    fill: ${palette.deep_red}
+  }
+`;
+
+const TodoCheckMark = styled(CheckMarkIcon)`
+  fill: ${palette.deep_green};
 `;
 
 const TodoButton = styled.button`
@@ -144,7 +162,14 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
             </TodoLeftSide>
             <TodoRightSide>
               {
-                !todo.checked && (<TodoButton onClick={() => {}} />)
+                todo.checked
+                  ? <TodoButton />
+                  : (
+                    <>
+                      <TodoTrashCanIcon />
+                      <TodoCheckMark />
+                    </>
+                  )
               }
             </TodoRightSide>
           </ToDoItem>
