@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useState } from "react";
 import styled from "styled-components";
 import palette from "../styles/palette";
 import { TodoType } from "../types/todo";
@@ -43,6 +43,54 @@ const TodoListHeaderRoundColor = styled.div`
   background-color: ${(props) => palette[props.color]};
 `;
 
+const ToDoItem = styled.li`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 52px;
+  border-bottom: 1px solid ${palette.gray};
+`;
+
+const TodoLeftSide = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+`;
+
+const TodoColorBlock = styled.div`
+  background-color: ${(props) => palette[props.color]};
+  width: 12px;
+  height: 100%;
+`;
+
+const TodoText = styled.p`
+  margin-left: 12px;
+  font-size: 16px;
+`;
+
+const CheckedTodoText = styled.p`
+  color: ${palette.gray};
+  text-decoration: line-through;
+  margin-left: 12px;
+  font-size: 16px;
+`;
+
+const TodoRightSide = styled.div`
+  display: flex;
+  margin-right: 12px;
+`;
+
+const TodoButton = styled.button`
+  width: 20px;
+  height: 20px;
+  border-radius: 50px;
+  border: 1px solid ${palette.gray};
+  background-color: transparent;
+  outline: none;
+`;
+
 interface IProps {
   todos: TodoType[];
 }
@@ -77,12 +125,31 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
         <TodoListHeaderColors>
           {Object.keys(todoColorNums).map((color, index) => (
             <TodoListHeaderColorsNum key={index}>
-              <TodoListHeaderRoundColor color={color}/>
+              <TodoListHeaderRoundColor color={color} />
               <p>{todoColorNums[color]}個</p>
             </TodoListHeaderColorsNum>
           ))}
         </TodoListHeaderColors>
       </TodoListHeader>
+      <ul>
+        {todos.map((todo) => (
+          <ToDoItem key={todo.id}>
+            <TodoLeftSide>
+              <TodoColorBlock color={todo.color} />
+              {
+                todo.checked
+                  ? <TodoText>{todo.text}</TodoText>
+                  : <CheckedTodoText>{todo.text}</CheckedTodoText>
+              }
+            </TodoLeftSide>
+            <TodoRightSide>
+              {
+                !todo.checked && (<TodoButton onClick={() => {}} />)
+              }
+            </TodoRightSide>
+          </ToDoItem>
+        ))}
+      </ul>
     </Container>
   );
 };
