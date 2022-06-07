@@ -12,7 +12,7 @@ const app: NextPage<IProps> = ({ todos }) => {
     <TodoList todos={todos} />
   );
 };
-
+//페이지의 데이터를 서버로부터 제공
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
     const { data } = await getTodosAPI();
