@@ -5,6 +5,7 @@ import { TodoType } from "../types/todo";
 
 import TrashCanIcon from "../public/static/svg/trash-can.svg";
 import CheckMarkIcon from "../public/static/svg/check-mark.svg";
+import { checkTodoAPI } from "../lib/api/todo";
 
 const Container = styled.div`
   width: 100%;
@@ -119,6 +120,22 @@ interface ObjectIndexType {
 
 const TodoList: React.FC<IProps> = ({ todos }) => {
   const [localTodos, setLocalTodos] = useState(todos);
+
+  const checkTodo = async (id: number) => {
+    try {
+      await checkTodoAPI(id);
+      const newTodos = localTodos.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, checked: !todo.checked };
+        }
+        return todo;
+      });
+      setLocalTodos(newTodos);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const todoColorNums = useMemo(() => {
     const colors: ObjectIndexType = {};
     localTodos.forEach((todo) => {
@@ -138,7 +155,7 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
     <Container>
       <TodoListHeader>
         <TodoListLastTodo>
-          残りのTODO <span>{todos.length}</span>
+          残りのTODO <span>{localTodos.length}</span>
         </TodoListLastTodo>
         <TodoListHeaderColors>
           {Object.keys(todoColorNums).map((color, index) => (
@@ -150,7 +167,7 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
         </TodoListHeaderColors>
       </TodoListHeader>
       <ul>
-        {todos.map((todo) => (
+        {localTodos.map((todo) => (
           <ToDoItem key={todo.id}>
             <TodoLeftSide>
               <TodoColorBlock color={todo.color} />
@@ -163,11 +180,11 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
             <TodoRightSide>
               {
                 todo.checked
-                  ? <TodoButton />
+                  ? <TodoButton onClick={() => { checkTodo(todo.id); }} />
                   : (
                     <>
                       <TodoTrashCanIcon />
-                      <TodoCheckMark />
+                      <TodoCheckMark onClick={() => { checkTodo(todo.id); }} />
                     </>
                   )
               }
