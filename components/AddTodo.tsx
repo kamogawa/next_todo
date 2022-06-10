@@ -77,7 +77,6 @@ const AddTodo: React.FC = () => {
         return;
       }
       await addTodoAPI({ text, color: selectedColor });
-      console.log("完了");
       router.push("/");
     } catch (e) {
       console.log(e);

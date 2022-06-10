@@ -5,7 +5,7 @@ import { TodoType } from "../types/todo";
 
 import TrashCanIcon from "../public/static/svg/trash-can.svg";
 import CheckMarkIcon from "../public/static/svg/check-mark.svg";
-import { checkTodoAPI } from "../lib/api/todo";
+import { checkTodoAPI, deleteTodoAPI } from "../lib/api/todo";
 
 const Container = styled.div`
   width: 100%;
@@ -136,6 +136,16 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
     }
   };
 
+  const deleteTodo = async (id: number) => {
+    try {
+      await deleteTodoAPI(id);
+      const newTodos = localTodos.filter((todo) => todo.id !== id);
+      setLocalTodos(newTodos);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const todoColorNums = useMemo(() => {
     const colors: ObjectIndexType = {};
     localTodos.forEach((todo) => {
@@ -183,7 +193,7 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
                   ? <TodoButton onClick={() => { checkTodo(todo.id); }} />
                   : (
                     <>
-                      <TodoTrashCanIcon />
+                      <TodoTrashCanIcon onClick={() => { deleteTodo(todo.id); }} />
                       <TodoCheckMark onClick={() => { checkTodo(todo.id); }} />
                     </>
                   )

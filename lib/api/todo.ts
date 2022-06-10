@@ -6,9 +6,13 @@ interface AddTodoAPIBody {
   color: TodoType["color"];
 }
 
-export const addTodoAPI = (body: AddTodoAPIBody) => axios.post("/api/todos", body);
+// todo 追加
+export const addTodoAPI = (body: AddTodoAPIBody) => axios.post("api/todos", body);
 
 export const getTodosAPI = () => axios.get<TodoType[]>("api/todos");
 
 // todo 체크
 export const checkTodoAPI = (id: number) => axios.patch(`api/todos/${id}`);
+
+// todo 削除
+export const deleteTodoAPI = (id: number) => axios.delete(`api/todos/${id}`);
