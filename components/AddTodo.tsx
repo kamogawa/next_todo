@@ -1,5 +1,7 @@
+import { useRouter } from "next/dist/client/router";
 import React, { useState } from "react";
 import styled from "styled-components";
+import { addTodoAPI } from "../lib/api/todo";
 import BrushIcon from "../public/static/svg/brush.svg";
 import palette from "../styles/palette";
 import { TodoType } from "../types/todo";
@@ -66,12 +68,27 @@ const TodoTextarea = styled.textarea`
 const AddTodo: React.FC = () => {
   const [text, setText] = useState("");
   const [selectedColor, setSelectedColor] = useState<TodoType["color"]>();
+  const router = useRouter();
+
+  const addTodo = async () => {
+    try {
+      if (!text || !selectedColor) {
+        alert("色とTodoを入力してください。");
+        return;
+      }
+      await addTodoAPI({ text, color: selectedColor });
+      console.log("完了");
+      router.push("/");
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <Container>
       <AddTodoHeader>
         <AddTodoHeaderTitle>Todo追加</AddTodoHeaderTitle>
-        <AddTodoSubmitButton type="button" onClick={() => {}}>
+        <AddTodoSubmitButton type="button" onClick={addTodo}>
           追加する
         </AddTodoSubmitButton>
       </AddTodoHeader>
