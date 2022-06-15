@@ -1,11 +1,14 @@
 import React, { useMemo, useState } from "react";
 import styled from "styled-components";
+
 import palette from "../styles/palette";
 import { TodoType } from "../types/todo";
-
 import TrashCanIcon from "../public/static/svg/trash-can.svg";
 import CheckMarkIcon from "../public/static/svg/check-mark.svg";
 import { checkTodoAPI, deleteTodoAPI } from "../lib/api/todo";
+import { useSelector } from "../store";
+import { useDispatch } from "react-redux";
+import { todoActions } from "../store/todo";
 
 const Container = styled.div`
   width: 100%;
@@ -118,19 +121,23 @@ interface ObjectIndexType {
   [key: string]: number | undefined;
 }
 
-const TodoList: React.FC<IProps> = ({ todos }) => {
-  const [localTodos, setLocalTodos] = useState(todos);
+const TodoList: React.FC<IProps> = () => {
+  const todos = useSelector((state) => state.todo.todos);
+
+  const dispatch = useDispatch();
+
+  // const [localTodos, setLocalTodos] = useState(todos);
 
   const checkTodo = async (id: number) => {
     try {
       await checkTodoAPI(id);
-      const newTodos = localTodos.map((todo) => {
+      const newTodos = todos.map((todo) => {
         if (todo.id === id) {
           return { ...todo, checked: !todo.checked };
         }
         return todo;
       });
-      setLocalTodos(newTodos);
+      dispatch(todoActions.setTodo(newTodos));
     } catch (e) {
       console.log(e);
     }
@@ -139,8 +146,8 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
   const deleteTodo = async (id: number) => {
     try {
       await deleteTodoAPI(id);
-      const newTodos = localTodos.filter((todo) => todo.id !== id);
-      setLocalTodos(newTodos);
+      const newTodos = todos.filter((todo) => todo.id !== id);
+      dispatch(todoActions.setTodo(newTodos));
     } catch (e) {
       console.log(e);
     }
@@ -148,7 +155,7 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
 
   const todoColorNums = useMemo(() => {
     const colors: ObjectIndexType = {};
-    localTodos.forEach((todo) => {
+    todos.forEach((todo) => {
       const value = colors[todo.color];
       if (!value) {
         //존재하지않던 key라면
@@ -159,13 +166,13 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
       }
     });
     return colors;
-  }, [localTodos]);
+  }, [todos]);
 
   return (
     <Container>
       <TodoListHeader>
         <TodoListLastTodo>
-          残りのTODO <span>{localTodos.length}</span>
+          残りのTODO <span>{todos.length}</span>
         </TodoListLastTodo>
         <TodoListHeaderColors>
           {Object.keys(todoColorNums).map((color, index) => (
@@ -177,7 +184,7 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
         </TodoListHeaderColors>
       </TodoListHeader>
       <ul>
-        {localTodos.map((todo) => (
+        {todos.map((todo) => (
           <ToDoItem key={todo.id}>
             <TodoLeftSide>
               <TodoColorBlock color={todo.color} />
